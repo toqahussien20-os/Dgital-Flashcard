@@ -5,10 +5,11 @@
 #include <algorithm>
 #include <ctime>
 #include <map>
+#include <random>
 
 using namespace std;
 
-// FlashCard class
+
 class FlashCard {
 public:
     string question;
@@ -17,7 +18,8 @@ public:
     int score;
 
     FlashCard(string q, string a, string c, int s = 0)
-        : question(q), answer(a), category(c), score(s) {}
+        : question(q), answer(a), category(c), score(s) {
+    }
 
     void display() {
         cout << "Category: " << category << "\n";
@@ -34,7 +36,7 @@ public:
     }
 };
 
-// FlashCardManager class
+
 class FlashCardManager {
 private:
     vector<FlashCard> cards;
@@ -85,7 +87,7 @@ public:
         string q, a, cat, scoreLine;
         cards.clear();
         while (getline(inFile, q) && getline(inFile, a) &&
-               getline(inFile, cat) && getline(inFile, scoreLine)) {
+            getline(inFile, cat) && getline(inFile, scoreLine)) {
             int s = stoi(scoreLine);
             cards.push_back(FlashCard(q, a, cat, s));
         }
@@ -99,8 +101,8 @@ public:
 
         for (auto& card : cards) {
             if (filterCategory.empty() || card.category == filterCategory) {
-                // Lower score → higher chance to be included multiple times
-                int frequency = max(1, 3 - card.score); // repeat low-score cards more
+                
+                int frequency = max(1, 3 - card.score); 
                 for (int i = 0; i < frequency; i++)
                     toReview.push_back(&card);
             }
@@ -112,7 +114,8 @@ public:
         }
 
         srand(time(0));
-        random_shuffle(toReview.begin(), toReview.end());
+        shuffle(toReview.begin(), toReview.end(), mt19937(time(0)));
+
 
         int correct = 0, total = 0;
 
@@ -128,7 +131,8 @@ public:
                 cout << "Correct!\n";
                 card->updateScore(true);
                 correct++;
-            } else {
+            }
+            else {
                 cout << "Wrong. Correct answer: " << card->answer << "\n";
                 card->updateScore(false);
             }
@@ -149,7 +153,40 @@ public:
     }
 };
 
-// App class
+class User {
+private:
+    string name;
+
+public:
+    User(string n = "Student") {
+        name = n;
+    }
+
+    string getName() {
+        return name;
+    }
+};
+
+class Statistics {
+private:
+    int totalReviewed;
+
+public:
+    Statistics() {
+        totalReviewed = 0;
+    }
+
+    void addReview() {
+        totalReviewed++;
+    }
+
+    int getTotalReviewed() {
+        return totalReviewed;
+    }
+};
+
+
+
 class App {
 private:
     FlashCardManager manager;
@@ -181,25 +218,33 @@ public:
                 cout << "Enter category (e.g. Math, History): ";
                 getline(cin, c);
                 manager.addCard(q, a, c);
-            } else if (choice == 2) {
+            }
+            else if (choice == 2) {
                 manager.viewCards();
-            } else if (choice == 3) {
+            }
+            else if (choice == 3) {
                 manager.reviewCards(); // review all
-            } else if (choice == 4) {
+            }
+            else if (choice == 4) {
                 string cat;
                 manager.listCategories();
                 cout << "Enter category to review: ";
                 getline(cin, cat);
                 manager.reviewCards(cat);
-            } else if (choice == 5) {
+            }
+            else if (choice == 5) {
                 manager.listCategories();
-            } else if (choice == 6) {
+            }
+            else if (choice == 6) {
                 manager.saveToFile(filename);
-            } else if (choice == 7) {
+            }
+            else if (choice == 7) {
                 manager.loadFromFile(filename);
-            } else if (choice == 8) {
+            }
+            else if (choice == 8) {
                 cout << "Goodbye! Study smart.\n";
-            } else {
+            }
+            else {
                 cout << "Invalid choice.\n";
             }
 
@@ -207,7 +252,7 @@ public:
     }
 };
 
-// Main function
+
 int main() {
     App myApp;
     myApp.run();
