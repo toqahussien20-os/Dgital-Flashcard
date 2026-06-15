@@ -1,162 +1,260 @@
 #include <iostream>
 #include <vector>
-#include <string>
 #include <fstream>
+#include <string>
 #include <algorithm>
 #include <ctime>
 #include <map>
+#include <random>
+
 using namespace std;
 
-// FlashCard class
+
 class FlashCard {
-private:
+public:
     string question;
     string answer;
+    string category;
     int score;
 
-public:
-    FlashCard(string q = "", string a = "", int s = 0) : question(q), answer(a), score(s) {}
-
-    void display() const {
-        cout << "Q: " << question << endl;
+    FlashCard(string q, string a, string c, int s = 0)
+        : question(q), answer(a), category(c), score(s) {
     }
 
-    bool checkAnswer(const string& userAnswer) {
-        if (userAnswer == answer) {
-            char feedback;
-            cout << "Correct! Was this easy to recall? (y/n): ";
-            cin >> feedback;
-            cin.ignore();
-            if (feedback == 'y' || feedback == 'Y') {
-                score++;
-            } else {
-                score = max(score - 1, 0);
-            }
-            return true;
-        } else {
-            score = max(score - 1, 0);
-            cout << "Incorrect. Correct Answer: " << answer << endl;
-            return false;
-        }
+    void display() {
+        cout << "Category: " << category << "\n";
+        cout << "Q: " << question << "\n";
+        cout << "A: " << answer << "\n";
+        cout << "Score (memory level): " << score << "\n";
     }
 
-    string getQuestion() const { return question; }
-    string getAnswer() const { return answer; }
-    int getScore() const { return score; }
-
-    void saveToFile(ofstream& out) const {
-        out << question << '\n' << answer << '\n' << score << '\n';
-    }
-
-    void loadFromFile(ifstream& in) {
-        getline(in, question);
-        getline(in, answer);
-        in >> score;
-        in.ignore();
+    void updateScore(bool correct) {
+        if (correct)
+            score++;
+        else if (score > 0)
+            score--;
     }
 };
 
-// FlashCardManager class
+
 class FlashCardManager {
 private:
     vector<FlashCard> cards;
-    const string filename = "flashcards.txt";
 
 public:
-    FlashCardManager() {
-        loadCards();
+    void addCard(string q, string a, string c, int s = 0) {
+        cards.push_back(FlashCard(q, a, c, s));
+        cout << "Flashcard added!\n";
     }
 
-    ~FlashCardManager() {
-        saveCards();
+    void viewCards() {
+        if (cards.empty()) {
+            cout << "No flashcards to show.\n";
+            return;
+        }
+
+        for (int i = 0; i < cards.size(); i++) {
+            cout << "\nCard " << i + 1 << ":\n";
+            cards[i].display();
+        }
     }
 
-    void addCard(const string& q, const string& a) {
-        cards.emplace_back(q, a);
+    void saveToFile(string filename) {
+        ofstream outFile(filename);
+        if (!outFile) {
+            cout << "Error saving file.\n";
+            return;
+        }
+
+        for (FlashCard card : cards) {
+            outFile << card.question << "\n";
+            outFile << card.answer << "\n";
+            outFile << card.category << "\n";
+            outFile << card.score << "\n";
+        }
+
+        outFile.close();
+        cout << "Flashcards saved to " << filename << "\n";
     }
 
-    void reviewCards() {
-        cout << "--- Review Flashcards ---" << endl;
-        vector<FlashCard*> difficult;
+    void loadFromFile(string filename) {
+        ifstream inFile(filename);
+        if (!inFile) {
+            cout << "No saved file found.\n";
+            return;
+        }
+
+        string q, a, cat, scoreLine;
+        cards.clear();
+        while (getline(inFile, q) && getline(inFile, a) &&
+            getline(inFile, cat) && getline(inFile, scoreLine)) {
+            int s = stoi(scoreLine);
+            cards.push_back(FlashCard(q, a, cat, s));
+        }
+
+        inFile.close();
+        cout << "Flashcards loaded from " << filename << "\n";
+    }
+
+    void reviewCards(string filterCategory = "") {
+        vector<FlashCard*> toReview;
 
         for (auto& card : cards) {
-            card.display();
-            cout << "Your answer: ";
+            if (filterCategory.empty() || card.category == filterCategory) {
+                
+                int frequency = max(1, 3 - card.score); 
+                for (int i = 0; i < frequency; i++)
+                    toReview.push_back(&card);
+            }
+        }
+
+        if (toReview.empty()) {
+            cout << "No flashcards found in this category.\n";
+            return;
+        }
+
+        srand(time(0));
+        shuffle(toReview.begin(), toReview.end(), mt19937(time(0)));
+
+
+        int correct = 0, total = 0;
+
+        for (auto* card : toReview) {
+            cout << "\n[Category: " << card->category << "]\n";
+            cout << "Question: " << card->question << "\n";
+            cout << "Enter your answer: ";
             string userAnswer;
             getline(cin, userAnswer);
-            if (!card.checkAnswer(userAnswer)) {
-                difficult.push_back(&card);
+
+            total++;
+            if (userAnswer == card->answer) {
+                cout << "Correct!\n";
+                card->updateScore(true);
+                correct++;
+            }
+            else {
+                cout << "Wrong. Correct answer: " << card->answer << "\n";
+                card->updateScore(false);
             }
         }
 
-        if (!difficult.empty()) {
-            cout << "--- Reviewing Difficult Cards ---" << endl;
-            for (auto* card : difficult) {
-                card->display();
-                cout << "Your answer: ";
-                string userAnswer;
-                getline(cin, userAnswer);
-                card->checkAnswer(userAnswer);
-            }
-        }
+        cout << "\nReview complete. Score: " << correct << "/" << total;
+        cout << " (" << (int)((correct / (float)total) * 100) << "% correct)\n";
     }
 
-    void saveCards() {
-        ofstream out(filename);
-        if (out.is_open()) {
-            out << cards.size() << '\n';
-            for (auto& card : cards) {
-                card.saveToFile(out);
-            }
-            out.close();
-        }
-    }
+    void listCategories() {
+        map<string, int> categoryMap;
+        for (auto& card : cards)
+            categoryMap[card.category]++;
 
-    void loadCards() {
-        ifstream in(filename);
-        if (in.is_open()) {
-            size_t count;
-            in >> count;
-            in.ignore();
-            cards.clear();
-            for (size_t i = 0; i < count; ++i) {
-                FlashCard card;
-                card.loadFromFile(in);
-                cards.push_back(card);
-            }
-            in.close();
-        }
+        cout << "\nAvailable Categories:\n";
+        for (auto& [cat, count] : categoryMap)
+            cout << "- " << cat << " (" << count << " cards)\n";
     }
 };
 
-// Main function
-int main() {
-    FlashCardManager manager;
-    int choice;
-    string q, a;
+class User {
+private:
+    string name;
 
-    do {
-        cout << "\n1. Add Flashcard\n2. Review Flashcards\n3. Exit\nChoose: ";
-        cin >> choice;
-        cin.ignore();
-        switch (choice) {
-            case 1:
+public:
+    User(string n = "Student") {
+        name = n;
+    }
+
+    string getName() {
+        return name;
+    }
+};
+
+class Statistics {
+private:
+    int totalReviewed;
+
+public:
+    Statistics() {
+        totalReviewed = 0;
+    }
+
+    void addReview() {
+        totalReviewed++;
+    }
+
+    int getTotalReviewed() {
+        return totalReviewed;
+    }
+};
+
+
+
+class App {
+private:
+    FlashCardManager manager;
+    string filename = "flashcards.txt";
+
+public:
+    void run() {
+        int choice;
+        do {
+            cout << "\n==== Flashcard Menu ====\n";
+            cout << "1. Add Flashcard\n";
+            cout << "2. View All Flashcards\n";
+            cout << "3. Review All Flashcards\n";
+            cout << "4. Review By Category\n";
+            cout << "5. Show Categories\n";
+            cout << "6. Save Flashcards\n";
+            cout << "7. Load Flashcards\n";
+            cout << "8. Exit\n";
+            cout << "Enter your choice: ";
+            cin >> choice;
+            cin.ignore();
+
+            if (choice == 1) {
+                string q, a, c;
                 cout << "Enter question: ";
                 getline(cin, q);
                 cout << "Enter answer: ";
                 getline(cin, a);
-                manager.addCard(q, a);
-                break;
-            case 2:
-                manager.reviewCards();
-                break;
-            case 3:
-                cout << "Goodbye!\n";
-                break;
-            default:
-                cout << "Invalid option.\n";
-        }
-    } while (choice != 3);
+                cout << "Enter category (e.g. Math, History): ";
+                getline(cin, c);
+                manager.addCard(q, a, c);
+            }
+            else if (choice == 2) {
+                manager.viewCards();
+            }
+            else if (choice == 3) {
+                manager.reviewCards(); // review all
+            }
+            else if (choice == 4) {
+                string cat;
+                manager.listCategories();
+                cout << "Enter category to review: ";
+                getline(cin, cat);
+                manager.reviewCards(cat);
+            }
+            else if (choice == 5) {
+                manager.listCategories();
+            }
+            else if (choice == 6) {
+                manager.saveToFile(filename);
+            }
+            else if (choice == 7) {
+                manager.loadFromFile(filename);
+            }
+            else if (choice == 8) {
+                cout << "Goodbye! Study smart.\n";
+            }
+            else {
+                cout << "Invalid choice.\n";
+            }
 
+        } while (choice != 8);
+    }
+};
+
+
+int main() {
+    App myApp;
+    myApp.run();
     return 0;
 }
