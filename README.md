@@ -1,1 +1,1 @@
-# Dgital-Flashcard
+# Digital-Flashcard
