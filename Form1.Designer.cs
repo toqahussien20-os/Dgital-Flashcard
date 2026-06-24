@@ -2,15 +2,10 @@
 {
     partial class Form1
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
+        
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+    
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -22,10 +17,7 @@
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
+    
         private void InitializeComponent()
         {
             lblQuestion = new Label();
@@ -45,58 +37,44 @@
             btnHard = new Button();
             btnNext = new Button();
             SuspendLayout();
-            // 
-            // lblQuestion
-            // 
+            
             lblQuestion.AutoSize = true;
             lblQuestion.Location = new Point(107, 45);
             lblQuestion.Name = "lblQuestion";
             lblQuestion.Size = new Size(71, 20);
             lblQuestion.TabIndex = 0;
             lblQuestion.Text = "Question:";
-            // 
-            // txtQuestion
-            // 
+        
             txtQuestion.Location = new Point(211, 38);
             txtQuestion.Name = "txtQuestion";
             txtQuestion.Size = new Size(125, 27);
             txtQuestion.TabIndex = 1;
-            // 
-            // lblAnswer
-            // 
+        
             lblAnswer.AutoSize = true;
             lblAnswer.Location = new Point(108, 82);
             lblAnswer.Name = "lblAnswer";
             lblAnswer.Size = new Size(60, 20);
             lblAnswer.TabIndex = 2;
             lblAnswer.Text = "Answer:";
-            // 
-            // Ib1Ctegory
-            // 
+            
             Ib1Ctegory.AutoSize = true;
             Ib1Ctegory.Location = new Point(109, 118);
             Ib1Ctegory.Name = "Ib1Ctegory";
             Ib1Ctegory.Size = new Size(72, 20);
             Ib1Ctegory.TabIndex = 3;
             Ib1Ctegory.Text = "Category:";
-            // 
-            // txtAnswer
-            // 
+            
             txtAnswer.Location = new Point(211, 75);
             txtAnswer.Name = "txtAnswer";
             txtAnswer.Size = new Size(125, 27);
             txtAnswer.TabIndex = 4;
-            // 
-            // txtCategory
-            // 
+            
             txtCategory.Location = new Point(211, 115);
             txtCategory.Name = "txtCategory";
             txtCategory.Size = new Size(125, 27);
             txtCategory.TabIndex = 5;
             txtCategory.TextChanged += textBox2_TextChanged;
-            // 
-            // btnAdd
-            // 
+            
             btnAdd.Location = new Point(89, 171);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(169, 29);
@@ -104,9 +82,7 @@
             btnAdd.Text = "Add Flashcard";
             btnAdd.UseVisualStyleBackColor = true;
             btnAdd.Click += btnAdd_Click;
-            // 
-            // btnDisplay
-            // 
+            
             btnDisplay.Location = new Point(264, 171);
             btnDisplay.Name = "btnDisplay";
             btnDisplay.Size = new Size(147, 29);
@@ -114,9 +90,7 @@
             btnDisplay.Text = "Display All";
             btnDisplay.UseVisualStyleBackColor = true;
             btnDisplay.Click += button2_Click;
-            // 
-            // btnSearch
-            // 
+            
             btnSearch.Location = new Point(89, 217);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(169, 29);
@@ -124,9 +98,7 @@
             btnSearch.Text = "Search";
             btnSearch.UseVisualStyleBackColor = true;
             btnSearch.Click += btnSearch_Click;
-            // 
-            // btnSave
-            // 
+            
             btnSave.Location = new Point(89, 270);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(169, 29);
@@ -134,9 +106,7 @@
             btnSave.Text = "Save File";
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
-            // 
-            // btnDelete
-            // 
+            
             btnDelete.Location = new Point(264, 217);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(147, 29);
@@ -144,9 +114,7 @@
             btnDelete.Text = "Delete";
             btnDelete.UseVisualStyleBackColor = true;
             btnDelete.Click += btnDelete_Click;
-            // 
-            // btnLoad
-            // 
+            
             btnLoad.Location = new Point(264, 270);
             btnLoad.Name = "btnLoad";
             btnLoad.Size = new Size(147, 29);
@@ -154,17 +122,13 @@
             btnLoad.Text = "Load File";
             btnLoad.UseVisualStyleBackColor = true;
             btnLoad.Click += btnLoad_Click;
-            // 
-            // lstFlashcards
-            // 
+            
             lstFlashcards.FormattingEnabled = true;
             lstFlashcards.Location = new Point(109, 330);
             lstFlashcards.Name = "lstFlashcards";
             lstFlashcards.Size = new Size(302, 104);
             lstFlashcards.TabIndex = 12;
-            // 
-            // btneasy
-            // 
+        
             btneasy.Location = new Point(620, 88);
             btneasy.Name = "btneasy";
             btneasy.Size = new Size(94, 29);
@@ -172,9 +136,7 @@
             btneasy.Text = "Easy";
             btneasy.UseVisualStyleBackColor = true;
             btneasy.Click += btneasy_Click;
-            // 
-            // btnHard
-            // 
+            
             btnHard.Location = new Point(620, 152);
             btnHard.Name = "btnHard";
             btnHard.Size = new Size(94, 29);
@@ -182,9 +144,7 @@
             btnHard.Text = "Hard";
             btnHard.UseVisualStyleBackColor = true;
             btnHard.Click += btnHard_Click;
-            // 
-            // btnNext
-            // 
+            
             btnNext.Location = new Point(620, 217);
             btnNext.Name = "btnNext";
             btnNext.Size = new Size(94, 29);
@@ -192,9 +152,7 @@
             btnNext.Text = "Next Card";
             btnNext.UseVisualStyleBackColor = true;
             btnNext.Click += btnNext_Click;
-            // 
-            // Form1
-            // 
+            
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1335, 632);
