@@ -1,3 +1,5 @@
+
+
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -6,6 +8,7 @@
 #include <ctime>
 #include <map>
 #include <random>
+#include <limits>
 
 using namespace std;
 
@@ -59,6 +62,35 @@ public:
         }
     }
 
+
+
+
+
+ void deleteCard() {
+        if (cards.empty()) {
+            cout << "No flashcards available.\n";
+            return;
+        }
+
+        viewCards();
+
+        int choice;
+        cout << "\nEnter the flashcard number to delete: ";
+        cin >> choice;
+        cin.ignore();
+
+        if (choice < 1 || choice > cards.size()) {
+            cout << "Invalid flashcard number.\n";
+            return;
+        }
+
+        cards.erase(cards.begin() + (choice - 1));
+        cout << "Flashcard deleted successfully!\n";
+    }
+
+
+
+
     void saveToFile(string filename) {
         ofstream outFile(filename);
         if (!outFile) {
@@ -100,9 +132,12 @@ public:
         vector<FlashCard*> toReview;
 
         for (auto& card : cards) {
+
+            cout << "Stored: [" << card.category << "]" << endl;
+            cout << "Entered: [" << filterCategory << "]" << endl;
+
             if (filterCategory.empty() || card.category == filterCategory) {
-                
-                int frequency = max(1, 3 - card.score); 
+                int frequency = max(1, 3 - card.score);
                 for (int i = 0; i < frequency; i++)
                     toReview.push_back(&card);
             }
@@ -202,9 +237,10 @@ public:
             cout << "3. Review All Flashcards\n";
             cout << "4. Review By Category\n";
             cout << "5. Show Categories\n";
-            cout << "6. Save Flashcards\n";
-            cout << "7. Load Flashcards\n";
-            cout << "8. Exit\n";
+            cout << "6. Delete Flashcard\n";
+            cout << "7. Save Flashcards\n";
+            cout << "8. Load Flashcards\n";
+            cout << "9. Exit\n";
             cout << "Enter your choice: ";
             cin >> choice;
             cin.ignore();
@@ -223,7 +259,7 @@ public:
                 manager.viewCards();
             }
             else if (choice == 3) {
-                manager.reviewCards(); // review all
+                manager.reviewCards(); 
             }
             else if (choice == 4) {
                 string cat;
@@ -234,21 +270,27 @@ public:
             }
             else if (choice == 5) {
                 manager.listCategories();
+                cout << "\nPress Enter to return to the menu...";
+                cin.get();
+
             }
             else if (choice == 6) {
-                manager.saveToFile(filename);
+                manager.deleteCard();
             }
             else if (choice == 7) {
-                manager.loadFromFile(filename);
+                manager.saveToFile(filename);
             }
             else if (choice == 8) {
+                manager.loadFromFile(filename);
+            }
+            else if (choice == 9) {
                 cout << "Goodbye! Study smart.\n";
             }
             else {
                 cout << "Invalid choice.\n";
             }
 
-        } while (choice != 8);
+        } while (choice != 9);
     }
 };
 
@@ -258,3 +300,4 @@ int main() {
     myApp.run();
     return 0;
 }
+
